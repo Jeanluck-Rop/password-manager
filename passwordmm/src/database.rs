@@ -86,13 +86,10 @@ impl Database {
     }
 
     pub fn fetch_by(&self,
-		    field: &str,
+		    field: SearchField,
 		    value: &str) -> Result<Vec<EntryView>> {
-	match field {
-	    "service" | "email" | "username" => {}
-	    _ => bail!("Invalid field"),
-	}
-	let sql = format!("SELECT id, service, email, username FROM Passwords WHERE {} = ?1", field);
+	let sql = format!("SELECT id, service, email, username FROM Passwords WHERE {} = ?1", field.as_column());
+
 	let mut stmt = self.conn.prepare(&sql)?;
         let rows = stmt.query_map([value], |row| {
             Ok(EntryView {
