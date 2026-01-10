@@ -1,3 +1,7 @@
-pub mod connection_db;
+pub mod home;
 
-pub mod password_struct;
+pub mod database;
+
+pub mod pm_structs;
+
+pub mod password_manager;
