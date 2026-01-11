@@ -8,6 +8,8 @@ anyhow = "1.0.100"
 rpassword = "7.4.0"
 directories = "5.0"
 tempfile = "3"
+zeroize = "1.7"
+secrecy = "0.8"
 
 [dependencies.rusqlite]
 version = "0.31.0"

@@ -1,3 +1,4 @@
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 pub enum SearchField {
     Service,
     Email,
@@ -5,7 +6,7 @@ pub enum SearchField {
 }
 
 impl SearchField {
-    fn as_column(&self) -> &'static str {
+    pub fn as_column(&self) -> &'static str {
         match self {
             SearchField::Service => "service",
             SearchField::Email => "email",
@@ -13,4 +14,3 @@ impl SearchField {
         }
     }
 }
-

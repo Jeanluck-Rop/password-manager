@@ -1,4 +1,4 @@
-use secret_string::SecretString;
+use secrecy::SecretString;
 
 #[derive(Debug, Clone)]
 pub struct EntryView {

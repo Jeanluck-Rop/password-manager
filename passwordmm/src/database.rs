@@ -1,10 +1,10 @@
 use std::path::Path;
-use secrecy::ExposeSecret;
-use secret_string::SecretString;
-use anyhow::{Context, Result, bail};
+use secrecy::{SecretString, ExposeSecret};
+use anyhow::{Context, Result};
 use rusqlite::{params, Connection};
 
-use crate::pm_structs::EntryView;
+use crate::pm_structs::*;
+use crate::search_field::SearchField;
 
 pub struct Database {
     conn: Connection
@@ -107,7 +107,7 @@ impl Database {
     }
     
     pub fn get_password(&self,
-			id: i64,) -> Result<SecretString> {
+			id: i64) -> Result<SecretString> {
 	let mut stmt = self.conn.prepare(
             "SELECT password FROM Passwords WHERE id = ?1"
 	)?;
@@ -116,7 +116,6 @@ impl Database {
         params![id],
             |row| row.get(0),
 	).map_err(|_| anyhow::anyhow!("No entry found with id {}", id))?;
-	
 	Ok(SecretString::new(password))
     }
 }
