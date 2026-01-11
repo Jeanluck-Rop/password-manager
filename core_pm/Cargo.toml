@@ -1,0 +1,20 @@
+[package]
+name = "core_pm"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.100"
+rpassword = "7.4.0"
+directories = "5.0"
+zeroize = "1.7"
+secrecy = "0.8"
+tempfile = "3" #for tests
+
+[dependencies.rusqlite]
+version = "0.31.0"
+features = ["sqlcipher", "bundled-sqlcipher"]
+
+[lib]
+name = "core_pm"
+path = "src/lib.rs"
