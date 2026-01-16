@@ -1,0 +1,90 @@
+<div class="home-form dialog hidden" id="home-open-form">
+  <div class="home-open-title">Open Password Database</div>
+  
+  <div class="home-open-content">
+    <div class="open-file-selection">
+      <button class="btn-select-file" id="btn-select-file">Select File</button>
+      <span class="file-path">Path to file to open</span>
+    </div>
+    
+    <div class="passkey-section">
+      <span class="label-passkey">Passkey</span>
+      <input class="entry-passkey" type="password" placeholder="Type passkey..." />
+      <button class="toggle-password" type="button">Tog</button>
+      <span class="passkey-error hidden">Incorrect passkey</span>
+    </div>
+  </div>
+  
+  <div class="confirm-open-buttons">
+    <button class="cancel-open-btn">Cancel</button>
+    <button class="accept-open-btn" disabled>Accept</button>
+  </div>
+</div>
+
+
+<div class="home-form dialog hidden" id="home-create-form">
+  <div class="home-create-title">Create Password Database</div>
+  
+  <div class="home-create-content">
+    <div class="create-file-section" >
+      <span class="label-file-name">Database name</span>
+      <input class="entry-file-name" type="text" placeholder="Type a file name..." />
+    </div>
+    
+    <div class="passkey-creation">
+      <span class="label-passkey-create">Insert a passkey for the database</span>
+      <input class="new-passkey" type="password" placeholder="Type a passkey file..." />
+      <button class="toggle-passkey" type="button">Tog</button>
+      <span class="passkey-error hidden">Incorrect passkey</span>
+    </div>
+    
+    <div class="passkey-confirm">
+      <span class="label-passkey-confirm">Confirm Passkey</span>
+      <input class="confirm-passkey" type="password" placeholder="Type passkey confirmation..." />
+      <button class="toggle-passkey-confirm" type="button">Tog</button>
+      <span class="passkey-confirm-error hidden">Passkey doesnt match</span>
+    </div>
+  </div>
+  
+  <div class="confirm-create-buttons">
+    <button class="cancel-create-btn">Cancel</button>
+    <button class="accept-create-btn" disabled>Accept</button>
+  </div>
+</div>
+  
+
+
+<div class="entry-form dialog hidden" id="entry-form">
+  <div class="form-title">Entry Form</div>
+
+  <div class="row-entries-content">
+    <div class="service-content">
+      <span class="label-entry-service">Service</span>
+      <input class="entry-service" type="text" placeholder="Service..." />
+    </div>
+    <div class="username-content">
+      <span class="label-entry-username">Username</span>
+      <input class="entry-username" type="text" placeholder="Username..." />
+    </div>
+    <div class="email-content">
+      <span class="label-entry-email">Email</span>
+      <input class="entry-email" type="text" placeholder="Email..." />
+    </div>
+    <div class="password-content">
+      <span class="label-entry-password">Password</span>
+      <input class="entry-password" type="password" placeholder="Password..." />
+      <button class="toggle-password" type="button">Sh</button>
+    </div>
+    <div class="confirm-password-content">
+      <span class="label-entry-email">Confirm Password</span>
+      <input class="entry-pass-confirm" type="password" placeholder="Confirm Password..." />
+      <button class="toggle-confirm" type="button">Sh</button>
+      <span class="entry-confirm-error hidden">Passwords do not match</span>
+    </div>
+  </div>
+
+  <div class="forms-confirm-buttons">
+    <button class="forms-cancel-btn">Cancel</button>
+    <button class="forms-accept-btn" disabled>Accept</button>
+  </div>
+</div>
