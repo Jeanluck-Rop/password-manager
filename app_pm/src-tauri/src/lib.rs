@@ -16,7 +16,8 @@ pub fn run() {
 						 commands::edit_row,
 						 commands::delete_row,
 						 commands::password_request,
-						 commands::show_all_rows])
+						 commands::show_all_rows,
+						 commands::search_rows])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

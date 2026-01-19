@@ -3,6 +3,7 @@ use anyhow::Result;
 use std::path::Path;
 use std::sync::Mutex;
 use thiserror::Error;
+use std::collections::HashMap;
 use secrecy::{SecretString, ExposeSecret};
 
 use core_pm::password_manager::PasswordManager;
@@ -134,8 +135,11 @@ pub fn show_all_rows(state: State<PMState>) -> Result<Vec<EntryView>, ErrPM> {
     let mut manager = state.manager.lock().unwrap();
     manager.show_all_entries().map_err(map_core_error)
 }
-/*
+
 #[tauri::command(rename_all = "snake_case")]
-pub fn search_rows() {
+pub fn search_rows(state: State<PMState>,
+		   requests: HashMap<String,
+				     Vec<SearchField>>) -> Result<Vec<EntryView>, ErrPM> {
+    let manager = state.manager.lock().unwrap();
+    manager.query_entries(requests).map_err(map_core_error)
 }
-*/

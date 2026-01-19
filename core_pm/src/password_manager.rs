@@ -64,16 +64,18 @@ impl PasswordManager {
     }
     
     pub fn query_entries(&self,
-			 requests: HashMap<String, SearchField>) -> Result<Vec<EntryView>> {
+			 requests: HashMap<String, Vec<SearchField>>) -> Result<Vec<EntryView>> {
 	let db = self.get_db()?;
 	let mut final_results = Vec::new();
 	let mut seen_ids = HashSet::new();
 	
-	for (value, field) in &requests {
-	    let found_entries = db.fetch_by(*field, value)?;
-	    for entry in found_entries {
-		if seen_ids.insert(entry.id) {
-                    final_results.push(entry);
+	for (value, fields) in &requests {
+	    for field in fields {
+		let found_entries = db.fetch_by(*field, value)?;
+		for entry in found_entries {
+		    if seen_ids.insert(entry.id) {
+			final_results.push(entry);
+		    }
 		}
             }
 	}
