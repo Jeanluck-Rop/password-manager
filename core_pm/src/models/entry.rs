@@ -1,6 +1,7 @@
+use serde::Serialize;
 use secrecy::SecretString;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct EntryView {
     pub id: i64,
     pub service: String,
