@@ -1,6 +1,8 @@
 import { loadManager } from "/views/manager_page/manager.js";
 import { showOpenFileForm, showCreateForm } from "/views/components/forms/home_forms.js";
 import { showConfirmDialog } from "/views/components/dialogs/dialogs.js";
+import { openDb, createDb } from '/views/utils/invokes.js';
+//import { buildDbPath } from "/views/utils/path_file.js";
 
 
 export async function
@@ -31,9 +33,13 @@ onOpenFile() {
   const open_btn = document.getElementById("btn-open");
   open_btn.addEventListener("click",
 			    () => {
-			      showOpenFileForm((data) => {
-				console.log("Datos recibidos del formulario:", data);
-				loadManager();
+			      showOpenFileForm(async (data) => {
+				try {
+				  await openDb(data.file_path, data.passkey);
+				  loadManager();
+				} catch (err) {
+				  console.error("Open DB failed: ", err);
+				}
 			      });
 			    });
 }
@@ -44,9 +50,13 @@ onCreateFile()
   const create_btn = document.getElementById("btn-create");
   create_btn.addEventListener("click",
 			      () => {
-				showCreateForm((data) => {
-				  console.log("Datos recibidos del formulario:", data);
-				  loadManager();
+				showCreateForm(async (data) => {
+				  try {
+				    await createDb(data.file_name, data.passkey);
+				    loadManager();
+				  } catch (err) {
+				    console.error("Create DB failed: ", err)
+				  }
 				});
 			      });
 }

@@ -1,7 +1,8 @@
 import { showNotifDialog, showConfirmDialog } from "/views/components/dialogs/dialogs.js";
 import { showEntryForm } from '/views/components/forms/row_forms.js';
+import { getPassword, updateRow, removeRow, copyToClipboard } from '/views/utils/invokes.js';
+//import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 
-const FAKE_PASSWORD = "fake_password_123";
 
 export class Row {
   
@@ -34,24 +35,29 @@ export class Row {
   updateView()
   {
     this.widget.querySelector(".row-service").textContent = this.data.service;
-    this.widget.querySelector(".row-user").textContent = this.data.user;
     this.widget.querySelector(".row-email").textContent = this.data.email;
+    this.widget.querySelector(".row-user").textContent = this.data.username;
     this.widget.querySelector(".row-pass").textContent = "••••••••";
   }
 
   
-  togglePassword()
+  async togglePassword()
   {
     const password_row = this.widget.querySelector(".row-pass");
     if (!this.is_password_visible) {
-      password_row.textContent = FAKE_PASSWORD;
-      this.show_btn.textContent = "SH";
-      this.is_password_visible = true;
+      try {
+	const password = await getPassword(this.data.id);
+	password_row.textContent = password;
+	this.show_btn.textContent = "SH";
+	this.is_password_visible = true;
+      } catch (err) {
+	console.error("togglePassword failed:", err);
+      }
     } else {
       password_row.textContent = "••••••••";
-      this.show_btn.textContent = "HI";
-      this.is_password_visible = false;
-    }
+	this.show_btn.textContent = "HI";
+	this.is_password_visible = false;
+      }
   }
 
   
@@ -70,49 +76,69 @@ export class Row {
     }
   }
 
-  copyPassword()
+  
+  async copyPassword()
   {
-    navigator.clipboard.writeText(FAKE_PASSWORD)
-      .then(() => { showNotifDialog("Success", `Password for ID ${this.data.id} copied!`); })
-      .catch(err => { console.error('Failed to copy: ', err); });
+    try {
+      const password = await getPassword(this.data.id);
+      //await navigator.clipboard.writeText(password);
+      await copyToClipboard(password);
+      
+      showNotifDialog("Success", `Password for ID ${this.data.id} copied!`);
+    } catch(err) {
+      console.error('Failed to copy: ', err);
+    }
     this.popover.classList.add("hidden");
   }
   
   
-  editRow()
+  async editRow()
   {
-    //
-    let dataForms = {
+    try {
+      const password = await getPassword(this.data.id);
+      let dataForms = {
         ...this.data, 
-        password: FAKE_PASSWORD
-    }; //
+        password
+      };
     
-    this.popover.classList.add("hidden");
-    showEntryForm(
-      (updatedData) => {
-	this.data =
-	  { ...this.data,
-	    ...updatedData };
-	this.updateView();
-	showNotifDialog("Row: " + this.data.id + " edited", "Success");
-      },
-      dataForms,
-      "edit");
+      this.popover.classList.add("hidden");
+      showEntryForm(
+	async (updatedData) => {
+	  this.data =
+	    { ...this.data,
+	      ...updatedData };
+	  try {
+	    await updateRow({
+	      id:this.data.id,
+	      ...updatedData
+	    });
+	    this.updateView();
+	    showNotifDialog("Row: " + this.data.id + " edited", "Success");
+	  } catch (err) {
+	    console.error("editRow failed: ", err);
+	  }
+	},
+	dataForms,
+	"edit");
+    } catch (err) {
+      console.error("Failed to load password:", err);
+    }
   }
   
   
   deleteRow()
   {
-    console.log(`Delete row clicked for ID: ${this.data.id}`);
     this.popover.classList.add("hidden");
     showConfirmDialog("Confirm Delete", `Are you sure you want to delete ${this.data.service}?`)
-      .then((confirmed) => {
+      .then(async (confirmed) => {
         if (confirmed) {
           this.widget.remove();
-          console.log(`Row ${this.data.id} deleted`);
-          showNotifDialog("Deleted", `Row ${this.data.id} has been removed.`);
-        } else {
-          console.log(`Delete cancelled for Row ${this.data.id}`);
+	  try {
+	    await removeRow(this.data.id);
+	    showNotifDialog("Deleted", `Row ${this.data.id} has been removed.`);
+	  } catch (err) {
+	    console.error("deleteRow failed: ", err);
+	  }
         }
       });
   }

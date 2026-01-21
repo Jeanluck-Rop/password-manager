@@ -1,4 +1,5 @@
 import { showOverlay, hideOverlay } from '/views/utils/utils.js';
+//import { open } from "@tauri-apps/plugin-fs";
 
 
 export function
@@ -43,15 +44,36 @@ showOpenFileForm(onAccept)
 	  cleanup();
 	  onAccept(data);
 	};
+  
   const on_passkey_input =
 	() => {
+	  const has_passkey = passkey_input.value.trim() !== "";
+	  const has_path = file_path.textContent.endsWith(".db");
+	  accept_btn.disabled = !(has_passkey && has_path);
+	};
+  const on_select_click =
+	/*async () => {
+	  const selected_path = await open({
+	    multiple: false,
+	    filters:
+	    [{
+	      name: "Database",
+	      extensions: ["db"]
+	    }]
+	    });*/
+	() => {
+	  //
+	  const selected_path = "/home/ianluck_rop/Scripts/mokachino.db";
+	  //
+	  if (!selected_path) {
+	    file_path.textContent = "No file selected";
+	    accept_btn.disabled = true;
+	    return;
+	  }
+	  file_path.textContent = selected_path;
 	  accept_btn.disabled = passkey_input.value.trim() === "";
 	};
   
-  const on_select_click =
-	() => {
-	  file_path.textContent = "path/to/unknown/file.db";
-	};
   const on_toggle_password =
 	() => {
 	  const is_hidden = passkey_input.type === "password";

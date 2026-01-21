@@ -18,8 +18,8 @@ showEntryForm(onAccept,
   const inputs =
 	{
 	  service: form.querySelector('.entry-service'),
-	  user: form.querySelector('.entry-username'),
 	  email: form.querySelector('.entry-email'),
+	  username: form.querySelector('.entry-username'),
 	  password: form.querySelector('.entry-password'),
 	  confirm: form.querySelector('.entry-pass-confirm')
 	};
@@ -31,8 +31,8 @@ showEntryForm(onAccept,
   
   if (mode === "edit" && row_data) {
     inputs.service.value = row_data.service;
-    inputs.user.value = row_data.user;
     inputs.email.value = row_data.email;
+    inputs.username.value = row_data.user;
     inputs.password.value = row_data.password;
   }
 
@@ -96,9 +96,9 @@ showEntryForm(onAccept,
 	() => {
 	  const data = {
 	    service: inputs.service.value.trim(),
-	    user: inputs.user.value.trim(),
 	    email: inputs.email.value.trim(),
-	    pass: inputs.password.value.trim(),
+	    username: inputs.username.value.trim(),
+	    password: inputs.password.value.trim(),
 	  };
 	  cleanup();
 	  onAccept(data);

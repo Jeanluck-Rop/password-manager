@@ -2,6 +2,7 @@ import { Row } from "/views/components/rows/row.js";
 import { loadHome } from "/views/home_page/home.js";
 import { showEntryForm } from '/views/components/forms/row_forms.js';
 import { showNotifDialog, showConfirmDialog } from '/views/components/dialogs/dialogs.js';
+import { closeDb, showAllRows, newRow, removeRow } from '/views/utils/invokes.js';
 
 
 export async function
@@ -25,35 +26,21 @@ loadManager()
   handleSearchEntry();
   onAddClicked();
   onExitClicked();
-
-  const rowsData = [
-    { id: 1, service: "Google", user: "juan@gmail.com", email: "juan@gmail.com" },
-    { id: 2, service: "GitHub", user: "maria", email: "maria@github.com" },
-    { id: 3, service: "Facebook", user: "pepe", email: "pepe@fb.com" }
-  ];
   
-  await deployRows(rowsData);
+  await refreshRows();
 }
 
 
 function
 handleSearchEntry()
-{
-  //
-  const rowsData = [
-    { id: 1, service: "Microsoft", user: "pedro perez", email: "pedrope@outllok.com" },
-    { id: 2, service: "Gitlab", user: "maria conchita", email: "macon@gitlab.com" },
-    { id: 3, service: "Instragram", user: "pepe bueno", email: "pepin@ig.com" },
-  ];
-  //
-  
+{  
   const search_input = document.getElementById("search");
   const clear_btn = document.getElementById("clear-search-entry");
  
   clear_btn.addEventListener("click",
-			     () => {
+			     async () => {
 			       search_input.value = "";
-			       deployRows(rowsData);
+			       await refreshRows();
 			     });
 
   search_input.addEventListener("keydown", (e) => {
@@ -87,8 +74,14 @@ onAddClicked()
     .addEventListener("click",
 		      () => {
 			showEntryForm(
-			  (data) => {
-			    console.log("Nueva entrada:", data);
+			  async (data) => {
+			    try {
+			      await newRow(data);
+			      showNotifDialog("Row: " + data.id + " added", "Success");
+			      await refreshRows();
+			    } catch (err) {
+			      console.error("newRow failed: ", err);
+			    }
 			  },
 			  null,
 			  "add");
@@ -102,17 +95,34 @@ onExitClicked()
   document.getElementById("exit-btn")
     .addEventListener("click",
 		      async () => {
-			const confirmed =
-			      await showConfirmDialog("Exit Manager", "Are you sure you want to exit?");
-			if (confirmed) {
-			  loadHome();
-			}
+			try {
+			  const confirmed =
+				await showConfirmDialog("Exit Manager", "Are you sure you want to exit?");
+				if (confirmed) {
+				  await closeDb();
+				  loadHome();
+				}
+			      } catch (err) {
+				console.error("Exit failed:", err);
+			      }
 		      });
 }
 
 
 async function
-deployRows(rows_data = [])
+refreshRows()
+{
+  try {
+    const all_rows = await showAllRows();
+    await deployRows(all_rows);
+  } catch (err) {
+    console.error("Error loading rows:", err);
+  }
+}
+
+
+async function
+deployRows(rows_data)
 {
   const container = document.getElementById("rows-container");
   container.innerHTML = "";
