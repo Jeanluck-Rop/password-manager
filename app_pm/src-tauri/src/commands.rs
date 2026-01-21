@@ -1,13 +1,15 @@
-use tauri::State;
+use arboard::Clipboard;
+
 use anyhow::Result;
+use secrecy::{ExposeSecret, SecretString};
+use std::collections::HashMap;
 use std::path::Path;
 use std::sync::Mutex;
+use tauri::State;
 use thiserror::Error;
-use std::collections::HashMap;
-use secrecy::{SecretString, ExposeSecret};
 
+use core_pm::models::{EntryView, NewEntry, SearchField, UpdateEntry};
 use core_pm::password_manager::PasswordManager;
-use core_pm::models::{EntryView, NewEntry, UpdateEntry, SearchField}; 
 
 pub struct PMState {
     pub manager: Mutex<PasswordManager>,
@@ -27,12 +29,12 @@ pub enum ErrPM {
 
 // we must manually implement serde::Serialize
 impl serde::Serialize for ErrPM {
-  fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-  where
-    S: serde::ser::Serializer,
-  {
-    serializer.serialize_str(self.to_string().as_ref())
-  }
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_str(self.to_string().as_ref())
+    }
 }
 
 fn map_core_error(err: anyhow::Error) -> ErrPM {
@@ -47,7 +49,6 @@ fn map_core_error(err: anyhow::Error) -> ErrPM {
     ErrPM::Db(err.to_string())
 }
 
-
 #[tauri::command]
 pub fn init_manager(state: State<PMState>) -> Result<(), ErrPM> {
     let mut manager = state.manager.lock().unwrap();
@@ -56,9 +57,7 @@ pub fn init_manager(state: State<PMState>) -> Result<(), ErrPM> {
 }
 
 #[tauri::command]
-pub fn open_db_request(state: State<PMState>,
-		       dir: String,
-		       key: String) -> Result<(), ErrPM> {
+pub fn open_db_request(state: State<PMState>, dir: String, key: String) -> Result<(), ErrPM> {
     let mut manager = state.manager.lock().unwrap();
     let path = Path::new(&dir);
     let secret = SecretString::new(key);
@@ -67,9 +66,7 @@ pub fn open_db_request(state: State<PMState>,
 }
 
 #[tauri::command]
-pub fn create_db_request(state: State<PMState>,
-			 dir: &str,
-			 key: String) -> Result<(), ErrPM> {
+pub fn create_db_request(state: State<PMState>, dir: String, key: String) -> Result<(), ErrPM> {
     let mut manager = state.manager.lock().unwrap();
     let path = Path::new(&dir);
     let secret = SecretString::new(key);
@@ -77,54 +74,62 @@ pub fn create_db_request(state: State<PMState>,
     Ok(())
 }
 
-#[tauri::command(rename_all = "snake_case")]
-pub fn new_row(state: State<PMState>,
-	       service_data: String,
-	       email_data: String,
-	       username_data: String,
-	       password_data: String) -> Result<(), ErrPM> {
+#[tauri::command]
+pub fn close_db_request(state: State<PMState>) -> Result<(), ErrPM> {
     let mut manager = state.manager.lock().unwrap();
-    let row =
-	NewEntry {
-	    service: service_data,
-	    email: Some(email_data),
-	    username: Some(username_data),
-	    password: SecretString::new(password_data)
-	};
+    manager.close_db();
+    Ok(())
+}
+
+#[tauri::command(rename_all = "snake_case")]
+pub fn new_row(
+    state: State<PMState>,
+    service_data: String,
+    email_data: String,
+    username_data: String,
+    password_data: String,
+) -> Result<(), ErrPM> {
+    let mut manager = state.manager.lock().unwrap();
+    let row = NewEntry {
+        service: service_data,
+        email: Some(email_data),
+        username: Some(username_data),
+        password: SecretString::new(password_data),
+    };
     manager.new_entry(&row).map_err(map_core_error)?;
     Ok(())
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn edit_row(state: State<PMState>,
-		row_id: i64,
-		row_service: String,
-		row_email: String,
-		row_username: String,
-		row_password: String) -> Result<(), ErrPM> {
+pub fn edit_row(
+    state: State<PMState>,
+    row_id: i64,
+    row_service: String,
+    row_email: String,
+    row_username: String,
+    row_password: String,
+) -> Result<(), ErrPM> {
     let mut manager = state.manager.lock().unwrap();
     let update_row = UpdateEntry {
-	id: row_id,
-	service: row_service,
-	email: Some(row_email),
-	username: Some(row_username),
-	password: SecretString::new(row_password)
+        id: row_id,
+        service: row_service,
+        email: Some(row_email),
+        username: Some(row_username),
+        password: SecretString::new(row_password),
     };
     manager.edit_entry(&update_row).map_err(map_core_error)?;
     Ok(())
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn delete_row(state: State<PMState>,
-		  row_id: i64) -> Result<(), ErrPM> {
+pub fn delete_row(state: State<PMState>, row_id: i64) -> Result<(), ErrPM> {
     let mut manager = state.manager.lock().unwrap();
     manager.remove_entry(row_id).map_err(map_core_error)?;
     Ok(())
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn password_request(state: State<PMState>,
-			row_id: i64) -> Result<String, ErrPM> {
+pub fn password_request(state: State<PMState>, row_id: i64) -> Result<String, ErrPM> {
     let manager = state.manager.lock().unwrap();
     let secret = manager.get_password(row_id).map_err(map_core_error)?;
     Ok(secret.expose_secret().to_string())
@@ -137,9 +142,22 @@ pub fn show_all_rows(state: State<PMState>) -> Result<Vec<EntryView>, ErrPM> {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn search_rows(state: State<PMState>,
-		   requests: HashMap<String,
-				     Vec<SearchField>>) -> Result<Vec<EntryView>, ErrPM> {
+pub fn search_rows(
+    state: State<PMState>,
+    requests: HashMap<String, Vec<SearchField>>,
+) -> Result<Vec<EntryView>, ErrPM> {
     let manager = state.manager.lock().unwrap();
     manager.query_entries(requests).map_err(map_core_error)
+}
+
+#[tauri::command]
+pub fn copy_to_clipboard(text: String) -> Result<(), String> {
+    let mut clipboard = Clipboard::new()
+        .map_err(|e| e.to_string())?;
+
+    clipboard
+        .set_text(text)
+        .map_err(|e| e.to_string())?;
+
+    Ok(())
 }

@@ -31,6 +31,10 @@ impl PasswordManager {
         self.db = Some(db);
         Ok(())
     }
+
+    pub fn close_db(&mut self) {
+        self.db = None;
+    }
     
     fn get_db(&self) -> Result<&Database> {
         self.db.as_ref().ok_or_else(|| anyhow::anyhow!("No database open."))
