@@ -1,8 +1,7 @@
 import { loadManager } from "/views/manager_page/manager.js";
 import { showOpenFileForm, showCreateForm } from "/views/components/forms/home_forms.js";
-import { showConfirmDialog } from "/views/components/dialogs/dialogs.js";
+import { showNotifDialog, showConfirmDialog } from "/views/components/dialogs/dialogs.js";
 import { openDb, createDb } from '/views/utils/invokes.js';
-//import { buildDbPath } from "/views/utils/path_file.js";
 
 
 export async function
@@ -26,7 +25,6 @@ loadHome()
   onOpenFile();
   onCreateFile();
 }
-
 
 function
 onOpenFile() {

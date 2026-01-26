@@ -1,133 +1,32 @@
-.center {
+html, body {
+    font-family:
+        "Adwaita Sans",
+        "Cantarell",
+        system-ui,
+        -apple-system,
+        sans-serif;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
 }
 
-.manager-header {
-}
-
-.manager-header input {
-}
-
-.manager-content {
-}
-
-.rows-container {
-}
-
-.row {
-}
-
-.row:hover {
-}
-
-
-
-/* Fondo semitransparente */
 .overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.45);
+    z-index: 999;
 }
 
-/* Oculto por defecto */
 .hidden {
-  display: none;
+    display: none;
 }
 
-/* Contenedor base del diálogo */
-.confirm-dialog, .notif-dialog,
-.home-form, .entry-form {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-  padding: 24px;
-  max-width: 380px;
-  text-align: center;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  position: fixed;
-  z-index: 1000; /* siempre por encima del overlay */
-  left: 50%;
-  top: 50%;
-  /* transform: translate(-50%, -50%); */
-  /* animation: fadeIn 0.2s ease-out; */
-}
-
-/* Título del diálogo */
-.notif-dialog-title, .confirm-dialog-title {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  color: #2d2d2d;
-}
-
-/* Texto del diálogo */
-.notif-dialog-text {
-  font-size: 14px;
-  color: #4b4b4b;
-  margin-bottom: 24px;
-  line-height: 1.4;
-}
-
-/* Botones */
-.dialog button {
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 500;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  padding: 8px 20px;
-  transition: background-color 0.2s ease;
-}
-
-/* Botón OK (para notif-dialog) */
-.notif-ok-btn {
-  background-color: #e53e3e;
-  color: white;
-}
-.notif-ok-btn:hover {
-  background-color: #c53030;
-}
-
-/* Botones de confirmación */
-.confirm-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-}
-
-/* Botón Cancelar */
-.confirm-cancel-btn {
-  background-color: #e0e0e0;
-  color: #333;
-}
-.confirm-cancel-btn:hover {
-  background-color: #cacaca;
-}
-
-/* Botón Aceptar (Replace) */
-.confirm-accept-btn {
-  background-color: #f87171; /* rojo suave */
-  color: #fff;
-}
-.confirm-accept-btn:hover {
-  background-color: #ef4444;
-}
-
-/* Animación de aparición */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #FFF;
+    border-radius: 14px;
+    z-index: 1000;
 }

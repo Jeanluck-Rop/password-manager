@@ -1,0 +1,109 @@
+.rows-empty {
+    padding: 32px 0;
+    text-align: center;
+    font-style: italic;
+    color: #a1a1a1;
+    font-size: 15px;
+}
+
+.row {
+    display: grid;
+
+    grid-template-columns:
+	minmax(160px, 1.4fr)   /* Service */
+	minmax(180px, 1.6fr)   /* Username */
+	minmax(200px, 2.8fr)   /* Email */
+	minmax(280px, 3fr)   /* Password */
+	minmax(90px, 0.8fr);  /* Actions */
+    
+    align-items: center;
+    gap: 12px;
+
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.row-labels {
+    display: contents;
+}
+
+.row-labels span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 14px;
+    line-height: 1.35; 
+}
+
+.row-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;          /* un poco más de aire */
+    height: 100%;
+    padding-right: 30px;
+    margin-top: -20;
+}
+
+.row-actions button {
+    width: 30px;
+    height: 30px;
+
+    border-radius: 50%;
+    border: none;
+    background: #fff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+
+}
+
+.row-actions button:hover {
+    background: #eee;
+}
+
+.row-actions img {
+    width: 16px;
+    height: 16px;
+    pointer-events: none;
+}
+
+.popover-container {
+    position: relative;
+}
+
+.popover {
+    transform-origin: top right;
+    position: absolute;
+    top: 40px;
+    right: 0;
+
+    min-width: 120px;
+    padding: 6px 0;
+
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+
+    display: flex;
+    flex-direction: column;
+    z-index: 20;
+}
+
+.popover span {
+    padding: 8px 14px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.popover span:hover {
+    background: #f0f0f0;
+}
+
+.popover.hidden {
+    display: none;
+}

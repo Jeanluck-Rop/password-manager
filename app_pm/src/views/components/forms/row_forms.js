@@ -66,16 +66,18 @@ showEntryForm(onAccept,
 
   const on_toggle_password =
 	() => {
+	  const icon = toggle_btn.querySelector("img");
 	  const is_hidden = inputs.password.type === "password";
 	  inputs.password.type = is_hidden ? "text" : "password";
-	  toggle_btn.textContent = is_hidden ? "HI" : "SH";
+	  icon.src = is_hidden ? "assets/eye-sh.svg" : "assets/eye-hi.svg";
 	};
   
   const on_toggle_confirm_password =
 	() => {
+	  const icon = toggle_confirm_btn.querySelector("img");
 	  const is_hidden = inputs.confirm.type === "password";
 	  inputs.confirm.type = is_hidden ? "text" : "password";
-	  toggle_confirm_btn.textContent = is_hidden ? "HI" : "SH";
+	  icon.src = is_hidden ? "assets/eye-sh.svg" : "assets/eye-hi.svg";
 	};
   
   const cleanup =

@@ -2,7 +2,7 @@ import { Row } from "/views/components/rows/row.js";
 import { loadHome } from "/views/home_page/home.js";
 import { showEntryForm } from '/views/components/forms/row_forms.js';
 import { showNotifDialog, showConfirmDialog } from '/views/components/dialogs/dialogs.js';
-import { closeDb, showAllRows, newRow, removeRow } from '/views/utils/invokes.js';
+import { closeDb, showAllRows, newRow, removeRow, searchRows } from '/views/utils/invokes.js';
 
 
 export async function
@@ -31,7 +31,7 @@ loadManager()
 }
 
 
-function
+async function
 handleSearchEntry()
 {  
   const search_input = document.getElementById("search");
@@ -43,23 +43,28 @@ handleSearchEntry()
 			       await refreshRows();
 			     });
 
-  search_input.addEventListener("keydown", (e) => {
+  search_input.addEventListener("keydown", async (e) => {
     if (e.key === "Enter") {
-      const rawValue = search_input.value.trim();
+      const raw_value = search_input.value.trim();
       
-      if (rawValue === "")
+      if (raw_value === "")
 	return;
       
-      let searchResult = {};
-      const defaultTypes = ["service", "username", "email"];
+      let search_result = {};
+      const default_types = ["service", "username", "email"];
       
-      rawValue.split(',').forEach((term) => {
-        const cleanTerm = term.trim();
-        if (cleanTerm.length > 0) {
-          searchResult[cleanTerm] = defaultTypes;
+      raw_value.split(',').forEach((term) => {
+        const clean_term = term.trim();
+        if (clean_term.length > 0) {
+          search_result[clean_term] = default_types;
         }
       });
-      console.log("Search JSON:", searchResult);
+      try {
+	const result_rows = await searchRows(search_result);
+	await deployRows(result_rows);
+      } catch (err) {
+	console.error("Error loading fetched rows:", err);
+      }
       search_input.value = "";
       search_input.blur();
     }
@@ -67,7 +72,7 @@ handleSearchEntry()
 }
 
 
-function
+async function
 onAddClicked()
 {
   document.getElementById("add-btn")
@@ -89,7 +94,7 @@ onAddClicked()
 }
 
 
-function
+async function
 onExitClicked()
 {
   document.getElementById("exit-btn")
@@ -98,13 +103,13 @@ onExitClicked()
 			try {
 			  const confirmed =
 				await showConfirmDialog("Exit Manager", "Are you sure you want to exit?");
-				if (confirmed) {
-				  await closeDb();
-				  loadHome();
-				}
-			      } catch (err) {
-				console.error("Exit failed:", err);
-			      }
+			  if (confirmed) {
+			    await closeDb();
+			    loadHome();
+			  }
+			} catch (err) {
+			  console.error("Exit failed:", err);
+			}
 		      });
 }
 
@@ -124,16 +129,30 @@ refreshRows()
 async function
 deployRows(rows_data)
 {
-  const container = document.getElementById("rows-container");
-  container.innerHTML = "";
-  const rows_response = await fetch("./views/components/rows/row.html");
-  const row_template = await rows_response.text();
-  rows_data.forEach(
-    (item) => {
-      const temp_div = document.createElement("div");
-      temp_div.innerHTML = row_template.trim();
-      const row_widget = temp_div.querySelector(".row");
-      const row = new Row(row_widget, item);
-      container.appendChild(row_widget);
-    });
+  try {
+    const container = document.getElementById("rows-container");
+    container.innerHTML = "";
+
+     if (!rows_data || rows_data.length === 0) {
+      const empty_msg = document.createElement("div");
+      empty_msg.className = "rows-empty";
+      empty_msg.textContent = "No passwords";
+      container.appendChild(empty_msg);
+      return;
+     }
+    
+    const rows_response = await fetch("./views/components/rows/row.html");
+    const row_template = await rows_response.text();
+    
+    rows_data.forEach(
+      (item) => {
+	const temp_div = document.createElement("div");
+	temp_div.innerHTML = row_template.trim();
+	const row_widget = temp_div.querySelector(".row");
+	const row = new Row(row_widget, item);
+	container.appendChild(row_widget);
+      });
+  } catch (err) {
+    console.error("deployRows failed:", err);
+  }
 }

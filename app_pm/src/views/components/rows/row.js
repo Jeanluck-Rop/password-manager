@@ -43,35 +43,43 @@ export class Row {
   
   async togglePassword()
   {
+    const icon = this.show_btn.querySelector("img");
     const password_row = this.widget.querySelector(".row-pass");
     if (!this.is_password_visible) {
       try {
 	const password = await getPassword(this.data.id);
 	password_row.textContent = password;
-	this.show_btn.textContent = "SH";
+	icon.src = "assets/eye-sh.svg";
 	this.is_password_visible = true;
       } catch (err) {
 	console.error("togglePassword failed:", err);
       }
     } else {
       password_row.textContent = "••••••••";
-	this.show_btn.textContent = "HI";
-	this.is_password_visible = false;
-      }
+      icon.src = "assets/eye-hi.svg";
+      this.is_password_visible = false;
+    }
   }
 
   
   togglePopover()
   {
-    this.popover.classList.toggle("hidden");
+    const icon = this.deploy_btn.querySelector("img");
+
+    const is_hidden = this.popover.classList.toggle("hidden");
+    icon.src = is_hidden
+      ? "assets/arrow-up.svg"
+      : "assets/arrow-down.svg";
+    
     const closeOnOutsideClick =
 	  (event) => {
 	    if (!this.popover.contains(event.target) && event.target !== this.deploy_btn) {
               this.popover.classList.add("hidden");
+	      icon.src = "assets/arrow-up.svg";
               document.removeEventListener("click", closeOnOutsideClick);
 	    }
 	  };
-    if (!this.popover.classList.contains("hidden")) {
+    if (!is_hidden) {
       document.addEventListener("click", closeOnOutsideClick);
     }
   }

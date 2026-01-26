@@ -1,5 +1,4 @@
 use std::sync::Mutex;
-use tauri::Manager;
 
 mod commands;
 use crate::commands::PMState;
@@ -10,16 +9,6 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
-        .setup(|app| {
-            #[cfg(debug_assertions)]
-            {
-                let window = app.get_webview_window("main").unwrap();
-
-                window.open_devtools();
-            }
-
-            Ok(())
-        })
         .plugin(tauri_plugin_opener::init())
         .manage(PMState {
             manager: Mutex::new(PasswordManager::new().unwrap()),

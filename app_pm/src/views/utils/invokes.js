@@ -78,10 +78,11 @@ showAllRows()
   return await invoke("show_all_rows");
 }
 
-/*
-export async function searchRows(requests) {
-  return await invoke("search_rows", { requests });
-} */
+export async function
+searchRows(requests)
+{
+  return await invoke("search_rows", { requests: requests });
+}
 
 export async function
 copyToClipboard(text_to_copy)

@@ -1,0 +1,53 @@
+.home-page {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 36px;
+}
+
+.home-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.home-btn {
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fafafa;
+    border: 3px solid #000;
+    border-radius: 8px;    
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.home-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.home-btn:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.home-btn img,
+.home-btn svg {
+    width: 60px;
+    height: 60px;
+    color: #000;
+    display: block;
+}
+
+.home-section span {
+    font-size: 16px;
+    font-weight: 600;
+    color: #222222;
+    text-align: center;
+}
