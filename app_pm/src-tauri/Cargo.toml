@@ -26,3 +26,6 @@ tauri-plugin-log = "2.8.0"
 tauri-plugin-dialog = "2"
 tauri-plugin-fs = "2"
 arboard = "3"
+
+#Openssl
+openssl = { version = "0.10", features = ["vendored"] }
