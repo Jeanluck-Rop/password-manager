@@ -61,8 +61,8 @@
 .dialog-form .accept-open-btn,
 .dialog-form .accept-create-btn,
 .dialog-form .forms-accept-btn {
-    background: #333;
-    border: #333;
+    background: #222;
+    border: #222;
     color: #fff;
     transition: opacity 0.15s ease;
 }
@@ -77,8 +77,8 @@
 
 .dialog-form button[class*="cancel"] {
     background: transparent;
-    color: #333;
-    border: 1px solid #333;
+    color: #222;
+    border: 1px solid #222;
 }
 
 .dialog-form .confirm-open-buttons,
@@ -146,3 +146,32 @@
     pointer-events: none;
 }
 
+
+.file-selection-section {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+}
+
+.file-path {
+    font-size: 14px;
+    color: #222;
+    font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 300px;
+}
+
+.dialog-form .btn-select-file {
+    height: 35px;
+    padding: 0 24px;
+    border-radius: 2px;
+    background: #222;
+    border: #222;
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
