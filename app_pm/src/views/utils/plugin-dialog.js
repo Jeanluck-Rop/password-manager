@@ -1,5 +1,6 @@
-//import { invoke } from '@tauri-apps/api/core';
+//These file was taken from node_modules due to the use of Vanilla Tauri
 
+//import { invoke } from '@tauri-apps/api/core';
 const { invoke } = window.__TAURI__.core;
 
 // Copyright 2019-2023 Tauri Programme within The Commons Conservancy
@@ -28,6 +29,7 @@ function buttonsToRust(buttons) {
     }
     return undefined;
 }
+
 /**
  * Open a file/directory selection dialog.
  *

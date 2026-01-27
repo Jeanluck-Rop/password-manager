@@ -1,7 +1,6 @@
-import { showNotifDialog, showConfirmDialog } from "/views/components/dialogs/dialogs.js";
 import { showEntryForm } from '/views/components/forms/row_forms.js';
+import { showNotifDialog, showConfirmDialog } from "/views/components/dialogs/dialogs.js";
 import { getPassword, updateRow, removeRow, copyToClipboard } from '/views/utils/invokes.js';
-//import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 
 
 export class Row {
@@ -16,10 +15,8 @@ export class Row {
     this.show_btn = this.widget.querySelector(".show-btn");
     this.deploy_btn = this.widget.querySelector(".deploy-btn");
     this.popover = this.widget.querySelector(".popover");
-    this.show_btn.addEventListener("click",
-				   () => this.togglePassword());
-    this.deploy_btn.addEventListener("click",
-				     () => this.togglePopover());
+    this.show_btn.addEventListener("click", () => this.togglePassword());
+    this.deploy_btn.addEventListener("click", () => this.togglePopover());
     this.popover.querySelector(".copy-opt")
       .addEventListener("click",
 			() => this.copyPassword());
@@ -52,7 +49,8 @@ export class Row {
 	icon.src = "assets/eye-sh.svg";
 	this.is_password_visible = true;
       } catch (err) {
-	console.error("togglePassword failed:", err);
+	const message = err instanceof Error ? err.message : String(err);
+	showNotifDialog("Error", "Showing the password failed: " + message);
       }
     } else {
       password_row.textContent = "••••••••";
@@ -65,12 +63,8 @@ export class Row {
   togglePopover()
   {
     const icon = this.deploy_btn.querySelector("img");
-
     const is_hidden = this.popover.classList.toggle("hidden");
-    icon.src = is_hidden
-      ? "assets/arrow-up.svg"
-      : "assets/arrow-down.svg";
-    
+    icon.src = is_hidden ? "assets/arrow-up.svg" : "assets/arrow-down.svg";
     const closeOnOutsideClick =
 	  (event) => {
 	    if (!this.popover.contains(event.target) && event.target !== this.deploy_btn) {
@@ -89,12 +83,11 @@ export class Row {
   {
     try {
       const password = await getPassword(this.data.id);
-      //await navigator.clipboard.writeText(password);
       await copyToClipboard(password);
-      
       showNotifDialog("Success", `Password for ID ${this.data.id} copied!`);
     } catch(err) {
-      console.error('Failed to copy: ', err);
+      const message = err instanceof Error ? err.message : String(err);
+      showNotifDialog("Error", "Copying the password to the clipboard failed: " + message);
     }
     this.popover.classList.add("hidden");
   }
@@ -104,11 +97,11 @@ export class Row {
   {
     try {
       const password = await getPassword(this.data.id);
-      let dataForms = {
-        ...this.data, 
-        password
-      };
-    
+      let dataForms =
+	  {
+	    ...this.data, 
+            password
+	  };
       this.popover.classList.add("hidden");
       showEntryForm(
 	async (updatedData) => {
@@ -121,15 +114,17 @@ export class Row {
 	      ...updatedData
 	    });
 	    this.updateView();
-	    showNotifDialog("Row: " + this.data.id + " edited", "Success");
+	    showNotifDialog("Success", "Password edited successfully!");
 	  } catch (err) {
-	    console.error("editRow failed: ", err);
+	    const message = err instanceof Error ? err.message : String(err);
+	    showNotifDialog("Error", "The password could not be edited due to an error: " + message);
 	  }
 	},
 	dataForms,
 	"edit");
     } catch (err) {
-      console.error("Failed to load password:", err);
+      const message = err instanceof Error ? err.message : String(err);
+      showNotifDialog("Error", "Failed to load the password data: " + message);
     }
   }
   
@@ -137,15 +132,16 @@ export class Row {
   deleteRow()
   {
     this.popover.classList.add("hidden");
-    showConfirmDialog("Confirm Delete", `Are you sure you want to delete ${this.data.service}?`)
+    showConfirmDialog("Confirm Delete Password", "Are you sure you want to delete th ${this.data.service} password?")
       .then(async (confirmed) => {
         if (confirmed) {
           this.widget.remove();
 	  try {
 	    await removeRow(this.data.id);
-	    showNotifDialog("Deleted", `Row ${this.data.id} has been removed.`);
+	    showNotifDialog("Succes", "The password was removed successfully!");
 	  } catch (err) {
-	    console.error("deleteRow failed: ", err);
+	    const message = err instanceof Error ? err.message : String(err);
+	    showNotifDialog("Error", "Failed deleting the password: " + message);
 	  }
         }
       });

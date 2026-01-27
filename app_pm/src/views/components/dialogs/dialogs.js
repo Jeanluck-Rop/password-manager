@@ -1,5 +1,5 @@
 import { showOverlay, hideOverlay } from '/views/utils/utils.js';
-
+import { dialogCleanup } from '/views/utils/utils.js';
 
 export function
 showNotifDialog(type,
@@ -11,13 +11,13 @@ showNotifDialog(type,
   dialog.querySelector('.notif-dialog-text').textContent = message;
   dialog.classList.remove('hidden');
   const ok_btn = dialog.querySelector('.notif-ok-btn');
-  const closeDialog =
+  const cleanup =
 	() => {
 	  dialog.classList.add('hidden');
 	  hideOverlay();
-	  ok_btn.removeEventListener('click', closeDialog);
+	  ok_btn.removeEventListener('click', cleanup);
 	};
-  ok_btn.addEventListener('click', closeDialog);
+  ok_btn.addEventListener('click', cleanup);
 }
 
 
@@ -41,7 +41,6 @@ showConfirmDialog(type,
 	      cancel_btn.removeEventListener('click', on_cancel_clicked);
 	      accept_btn.removeEventListener('click', on_accept_clicked);
 	    };
-      
       const on_cancel_clicked =
 	    () => {
 	      cleanup();
@@ -50,9 +49,8 @@ showConfirmDialog(type,
       const on_accept_clicked =
 	    () => {
 	      cleanup();
-	    resolve(true);
+	      resolve(true);
 	    };
-      
       cancel_btn.addEventListener('click', on_cancel_clicked);
       accept_btn.addEventListener('click', on_accept_clicked);
     });

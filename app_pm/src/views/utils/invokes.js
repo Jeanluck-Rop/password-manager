@@ -1,5 +1,6 @@
 const { invoke } = window.__TAURI__.core;
 
+
 export async function
 openDb(path,
        passkey)
@@ -10,6 +11,7 @@ openDb(path,
 			key: passkey
 		      });
 }
+
 
 export async function
 createDb(file,
@@ -22,11 +24,13 @@ createDb(file,
 		      });
 }
 
+
 export async function
 closeDb()
 {
   return await invoke("close_db_request");
 }
+
 
 export async function
 newRow(entry)
@@ -54,6 +58,7 @@ updateRow(entry)
 		      });
 }
 
+
 export async function
 removeRow(id)
 {
@@ -62,6 +67,7 @@ removeRow(id)
 			row_id: id
 		      });
 }
+
 
 export async function
 getPassword(id)
@@ -72,17 +78,20 @@ getPassword(id)
 		      });
 }
 
+
 export async function
 showAllRows()
 {
   return await invoke("show_all_rows");
 }
 
+
 export async function
 searchRows(requests)
 {
   return await invoke("search_rows", { requests: requests });
 }
+
 
 export async function
 copyToClipboard(text_to_copy)

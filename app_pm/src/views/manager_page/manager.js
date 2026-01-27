@@ -16,43 +16,34 @@ loadManager()
 	  fetch("/views/manager_page/manager.html"),
 	  fetch("/views/components/dialogs/dialogs.html"),
 	  fetch("/views/components/forms/forms.html")]);
-  
   const manager_html = await manager_response.text();
   const dialog_html = await dialog_response.text();
   const forms_html = await forms_response.text();
-  
   app.innerHTML = manager_html + dialog_html + forms_html;
-  
   handleSearchEntry();
   onAddClicked();
   onExitClicked();
-  
   await refreshRows();
 }
 
 
 async function
 handleSearchEntry()
-{  
+{
   const search_input = document.getElementById("search");
   const clear_btn = document.getElementById("clear-search-entry");
- 
   clear_btn.addEventListener("click",
 			     async () => {
 			       search_input.value = "";
 			       await refreshRows();
 			     });
-
   search_input.addEventListener("keydown", async (e) => {
     if (e.key === "Enter") {
       const raw_value = search_input.value.trim();
-      
       if (raw_value === "")
 	return;
-      
       let search_result = {};
       const default_types = ["service", "username", "email"];
-      
       raw_value.split(',').forEach((term) => {
         const clean_term = term.trim();
         if (clean_term.length > 0) {
@@ -82,10 +73,11 @@ onAddClicked()
 			  async (data) => {
 			    try {
 			      await newRow(data);
-			      showNotifDialog("Row: " + data.id + " added", "Success");
+			      showNotifDialog( "Success", "New password successfully added");
 			      await refreshRows();
 			    } catch (err) {
-			      console.error("newRow failed: ", err);
+			      const message = err instanceof Error ? err.message : String(err);
+			      showNotifDialog("Error", "There was an error while adding the new pasword: " + message);
 			    }
 			  },
 			  null,
@@ -108,7 +100,8 @@ onExitClicked()
 			    loadHome();
 			  }
 			} catch (err) {
-			  console.error("Exit failed:", err);
+			  const message = err instanceof Error ? err.message : String(err);
+			  showNotifDialog("Error", "Error while exiting the password manager: " + message);
 			}
 		      });
 }
@@ -121,7 +114,8 @@ refreshRows()
     const all_rows = await showAllRows();
     await deployRows(all_rows);
   } catch (err) {
-    console.error("Error loading rows:", err);
+    const message = err instanceof Error ? err.message : String(err);
+    showNotifDialog("Error", "There was an error while deploying the passwords: " + message);
   }
 }
 
@@ -132,7 +126,6 @@ deployRows(rows_data)
   try {
     const container = document.getElementById("rows-container");
     container.innerHTML = "";
-
      if (!rows_data || rows_data.length === 0) {
       const empty_msg = document.createElement("div");
       empty_msg.className = "rows-empty";
@@ -140,10 +133,8 @@ deployRows(rows_data)
       container.appendChild(empty_msg);
       return;
      }
-    
-    const rows_response = await fetch("./views/components/rows/row.html");
+    const rows_response = await fetch("/views/components/rows/row.html");
     const row_template = await rows_response.text();
-    
     rows_data.forEach(
       (item) => {
 	const temp_div = document.createElement("div");
@@ -153,6 +144,7 @@ deployRows(rows_data)
 	container.appendChild(row_widget);
       });
   } catch (err) {
-    console.error("deployRows failed:", err);
+    const message = err instanceof Error ? err.message : String(err);
+    showNotifDialog("Error", "There was an error while deploying the passwords: " + message);
   }
 }

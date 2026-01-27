@@ -9,7 +9,6 @@ showEntryForm(onAccept,
   showOverlay();
   const form = document.getElementById('entry-form');
   form.classList.remove('hidden');
-  
   const cancel_btn = form.querySelector('.forms-cancel-btn');
   const accept_btn = form.querySelector('.forms-accept-btn');
   const confirm_error = form.querySelector('.entry-confirm-error');
@@ -23,24 +22,21 @@ showEntryForm(onAccept,
 	  password: form.querySelector('.entry-password'),
 	  confirm: form.querySelector('.entry-pass-confirm')
 	};
-  
   confirm_error.textContent = "";
   accept_btn.disabled = true;
-  Object.values(inputs)
-    .forEach((inp) => (inp.value = ""));
-  
+  Object.values(inputs).forEach((inp) => (inp.value = ""));
   if (mode === "edit" && row_data) {
     inputs.service.value = row_data.service;
     inputs.email.value = row_data.email;
     inputs.username.value = row_data.user;
     inputs.password.value = row_data.password;
   }
-
   const validate_forms =
 	() => {
-	  const { service,
-		  password,
-		  confirm } = inputs;
+	  const {
+	    service,
+	    password,
+	    confirm } = inputs;
 	  const requirements =
 		service.value.trim()
 		&& password.value.trim()
@@ -60,10 +56,7 @@ showEntryForm(onAccept,
 	    accept_btn.disabled = false;
 	  }
 	}
-  
-  Object.values(inputs).
-    forEach((inp) => inp.addEventListener('input', validate_forms));
-
+  Object.values(inputs).forEach((inp) => inp.addEventListener('input', validate_forms));
   const on_toggle_password =
 	() => {
 	  const icon = toggle_btn.querySelector("img");
@@ -71,7 +64,6 @@ showEntryForm(onAccept,
 	  inputs.password.type = is_hidden ? "text" : "password";
 	  icon.src = is_hidden ? "assets/eye-sh.svg" : "assets/eye-hi.svg";
 	};
-  
   const on_toggle_confirm_password =
 	() => {
 	  const icon = toggle_confirm_btn.querySelector("img");
@@ -79,7 +71,6 @@ showEntryForm(onAccept,
 	  inputs.confirm.type = is_hidden ? "text" : "password";
 	  icon.src = is_hidden ? "assets/eye-sh.svg" : "assets/eye-hi.svg";
 	};
-  
   const cleanup =
 	() => {
 	  form.classList.add('hidden');
@@ -90,10 +81,8 @@ showEntryForm(onAccept,
 	  toggle_confirm_btn.removeEventListener('click', on_toggle_confirm_password);
 	  Object.values(inputs).forEach(inp => inp.removeEventListener('input', validate_forms));
 	};
-  
   const on_cancel_click =
 	() => { cleanup(); };
-  
   const on_accept_click =
 	() => {
 	  const data = {
@@ -105,7 +94,6 @@ showEntryForm(onAccept,
 	  cleanup();
 	  onAccept(data);
 	};
-  
   cancel_btn.addEventListener('click', on_cancel_click);
   accept_btn.addEventListener('click', on_accept_click);
   toggle_btn.addEventListener('click', on_toggle_password);
