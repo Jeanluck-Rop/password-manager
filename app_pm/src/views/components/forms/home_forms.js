@@ -1,5 +1,19 @@
 import { showOverlay, hideOverlay } from '/views/utils/utils.js';
+//import { open } from '@tauri-apps/plugin-dialog';
+import { open } from '/views/utils/plugin-dialog.js';
 
+export async function
+openFileExplorer()
+{
+  const selected = await open({
+    multiple: false,
+    filters: [{
+      name: 'Base de Datos',
+      extensions: ['db', 'sqlite', 'sqlite3']
+    }]
+  });
+  return selected;
+}
 
 export function
 showOpenFileForm(onAccept)
@@ -8,24 +22,27 @@ showOpenFileForm(onAccept)
   const form = document.getElementById('home-open-form');
   form.classList.remove('hidden');
   
-  //const select_btn = form.querySelector('.btn-select-file');
-  const file_path_input = form.querySelector('.entry-select-file');
-  //const file_path = form.querySelector('.file-path');
+  const select_btn = form.querySelector('.btn-select-file');
+  //const file_path_input = form.querySelector('.entry-select-file');
+  const file_path = form.querySelector('.file-path');
+  
   const passkey_input = form.querySelector('.entry-passkey');
   const toggle_btn = form.querySelector('.toggle-password');
   
   const cancel_btn = form.querySelector('.cancel-open-btn');
   const accept_btn = form.querySelector('.accept-open-btn');
+  let current_db_path = "";
   
   passkey_input.value = "";
-  file_path_input.value = "";
-  //file_path.textContent = "Path to file to open";
+  file_path.textContent = "No database selected";
+  current_db_path = "";
   accept_btn.disabled = true;
   
   const cleanup =
 	() => {
 	  form.classList.add('hidden');
-	  file_path_input.removeEventListener('input', on_inputs_changed);
+	  select_btn.removeEventListener('click', on_select_file_click)
+	  //file_path_input.removeEventListener('input', on_inputs_changed);
 	  passkey_input.removeEventListener('input', on_inputs_changed);
 	  toggle_btn.removeEventListener('click', on_toggle_passkey);
 	  cancel_btn.removeEventListener('click', on_cancel_click);
@@ -38,7 +55,8 @@ showOpenFileForm(onAccept)
 	() => {
 	  const data =
 		{
-		  file_path: file_path_input.value.trim(),
+		  //file_path: file_path_input.value.trim(),
+		  file_path: current_db_path,
 		  passkey: passkey_input.value.trim()
 		};
 	  cleanup();
@@ -46,10 +64,23 @@ showOpenFileForm(onAccept)
 	};
   const on_inputs_changed =
 	() => {
-	  const has_path = file_path_input.value.trim().endsWith(".db");
+	  //const has_path = file_path_input.value.trim().endsWith(".db");
+	  const has_path = current_db_path.length > 0 && current_db_path.endsWith(".db");
 	  const has_passkey = passkey_input.value.trim() !== "";
 	  accept_btn.disabled = !(has_passkey && has_path);
-	};  
+	};
+  const on_select_file_click =
+	async () => {
+	  try {
+	    const path = await openFileExplorer();
+	    if (path) {
+              current_db_path = path;
+              file_path.textContent = path;
+	    }
+	  } catch (error) {
+	    console.error("Error abriendo diálogo:", error);
+	  }
+	};
   const on_toggle_passkey =
 	() => {
 	  const icon = toggle_btn.querySelector("img");
@@ -59,7 +90,8 @@ showOpenFileForm(onAccept)
 	  icon.src = is_hidden ? "assets/eye-sh.svg" : "assets/eye-hi.svg";
 	};
 
-  file_path_input.addEventListener('input', on_inputs_changed);
+  //file_path_input.addEventListener('input', on_inputs_changed);
+  select_btn.addEventListener('click', on_select_file_click);
   passkey_input.addEventListener('input', on_inputs_changed);
   toggle_btn.addEventListener('click', on_toggle_passkey);
   cancel_btn.addEventListener('click', on_cancel_click);

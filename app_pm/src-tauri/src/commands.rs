@@ -25,6 +25,9 @@ pub enum ErrPM {
 
     #[error("Database error: {0}")]
     Db(String),
+
+    #[error("System path error: {0}")]
+    PathError(String)
 }
 
 // we must manually implement serde::Serialize
@@ -38,15 +41,14 @@ impl serde::Serialize for ErrPM {
 }
 
 fn map_core_error(err: anyhow::Error) -> ErrPM {
-    if err.to_string().contains("No database open") {
-        return ErrPM::NoDatabase;
-    }
-
     if let Some(io) = err.downcast_ref::<std::io::Error>() {
         return ErrPM::Io(io.to_string());
     }
-
-    ErrPM::Db(err.to_string())
+    let err_msg = err.to_string();
+    if err_msg.contains("No database open") {
+        return ErrPM::NoDatabase;
+    }
+    ErrPM::Db(err_msg)
 }
 
 #[tauri::command]
@@ -65,10 +67,20 @@ pub fn open_db_request(state: State<PMState>, dir: String, key: String) -> Resul
     Ok(())
 }
 
-#[tauri::command]
-pub fn create_db_request(state: State<PMState>, dir: String, key: String) -> Result<(), ErrPM> {
+//#[tauri::command]
+#[tauri::command(rename_all = "snake_case")]
+pub fn create_db_request(state: State<PMState>, file_name: String, key: String) -> Result<(), ErrPM> {
     let mut manager = state.manager.lock().unwrap();
-    let path = Path::new(&dir);
+
+    let docs_dir = dirs::document_dir().ok_or_else(|| {
+        ErrPM::PathError("No se pudo encontrar el directorio de documentos".into()) 
+    })?;
+    
+    let path = docs_dir.join(file_name);
+    
+    println!("Creando base de datos en: {:?}", path);
+    
+    //let path = Path::new(&dir);
     let secret = SecretString::new(key);
     manager.create_db(&path, &secret).map_err(map_core_error)?;
     Ok(())

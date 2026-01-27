@@ -12,12 +12,12 @@ openDb(path,
 }
 
 export async function
-createDb(path,
+createDb(file,
 	 passkey)
 {
   return await invoke("create_db_request",
 		      {
-			dir: path,
+			file_name: file,
 			key: passkey
 		      });
 }

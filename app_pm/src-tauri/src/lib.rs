@@ -1,5 +1,7 @@
 use std::sync::Mutex;
 
+use tauri::Manager;
+
 mod commands;
 use crate::commands::PMState;
 use core_pm::password_manager::PasswordManager;
@@ -9,7 +11,6 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
-        .plugin(tauri_plugin_opener::init())
         .manage(PMState {
             manager: Mutex::new(PasswordManager::new().unwrap()),
         })
@@ -26,6 +27,14 @@ pub fn run() {
             commands::search_rows,
 	    commands::copy_to_clipboard
         ])
+	.setup(|app| {
+            #[cfg(debug_assertions)]
+            {
+                let window = app.get_webview_window("main").unwrap();
+                window.open_devtools();
+            }
+            Ok(())
+	})
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
