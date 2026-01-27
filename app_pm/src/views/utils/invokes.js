@@ -91,13 +91,3 @@ searchRows(requests)
 {
   return await invoke("search_rows", { requests: requests });
 }
-
-
-export async function
-copyToClipboard(text_to_copy)
-{
-  return await invoke("copy_to_clipboard",
-		      {
-			text: text_to_copy
-		      });
-}

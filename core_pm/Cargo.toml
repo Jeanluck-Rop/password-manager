@@ -14,7 +14,9 @@ tempfile = "3" #for tests
 
 [dependencies.rusqlite]
 version = "0.31.0"
-features = ["sqlcipher", "bundled-sqlcipher"]
+#features = ["sqlcipher", "bundled-sqlcipher"]
+#For android dev
+features = ["sqlcipher", "bundled-sqlcipher-vendored-openssl"]
 
 [lib]
 name = "core_pm"

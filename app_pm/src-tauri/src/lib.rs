@@ -9,6 +9,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
+	.plugin(tauri_plugin_clipboard_manager::init())
         .manage(PMState {
             manager: Mutex::new(PasswordManager::new().unwrap()),
         })
@@ -22,8 +23,7 @@ pub fn run() {
             commands::delete_row,
             commands::password_request,
             commands::show_all_rows,
-            commands::search_rows,
-	    commands::copy_to_clipboard
+            commands::search_rows
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

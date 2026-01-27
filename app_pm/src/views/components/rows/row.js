@@ -1,6 +1,7 @@
 import { showEntryForm } from '/views/components/forms/row_forms.js';
 import { showNotifDialog, showConfirmDialog } from "/views/components/dialogs/dialogs.js";
-import { getPassword, updateRow, removeRow, copyToClipboard } from '/views/utils/invokes.js';
+import { getPassword, updateRow, removeRow } from '/views/utils/invokes.js';
+import { writeText } from '/views/utils/plugin-clipboard.js';
 
 
 export class Row {
@@ -83,8 +84,8 @@ export class Row {
   {
     try {
       const password = await getPassword(this.data.id);
-      await copyToClipboard(password);
-      showNotifDialog("Success", `Password for ID ${this.data.id} copied!`);
+      await writeText(password);    
+      showNotifDialog("Success", `Password copied to clipboard successfully!`);
     } catch(err) {
       const message = err instanceof Error ? err.message : String(err);
       showNotifDialog("Error", "Copying the password to the clipboard failed: " + message);
