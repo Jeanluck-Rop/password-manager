@@ -1,13 +1,10 @@
-//use arboard::Clipboard;
 use anyhow::Result;
 use secrecy::{ExposeSecret, SecretString};
 use std::collections::HashMap;
 use std::path::Path;
 use std::sync::Mutex;
-use thiserror::Error;
 use tauri::State;
-//use tauri::AppHandle;
-//use tauri_plugin_clipboard_manager::ClipboardExt;
+use thiserror::Error;
 
 use core_pm::models::{EntryView, NewEntry, SearchField, UpdateEntry};
 use core_pm::password_manager::PasswordManager;
@@ -68,7 +65,6 @@ pub fn open_db_request(state: State<PMState>, dir: String, key: String) -> Resul
     Ok(())
 }
 
-//#[tauri::command]
 #[tauri::command(rename_all = "snake_case")]
 pub fn create_db_request(
     state: State<PMState>,
@@ -166,23 +162,3 @@ pub fn search_rows(
     let manager = state.manager.lock().unwrap();
     manager.query_entries(requests).map_err(map_core_error)
 }
-
-/*
-#[tauri::command]
-pub fn copy_to_clipboard(text: String) -> Result<(), String> {
-    let mut clipboard = Clipboard::new().map_err(|e| e.to_string())?;
-
-    clipboard.set_text(text).map_err(|e| e.to_string())?;
-
-    Ok(())
-}
-*/
-
-/*
-#[tauri::command]
-pub fn copy_to_clipboard(app: AppHandle, text: String) -> Result<(), String> {
-    app.clipboard().write_text(text)
-        .map_err(|e| e.to_string())?;
-    Ok(())
-}
-*/

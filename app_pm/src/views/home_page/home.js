@@ -5,7 +5,7 @@ import { showNotifDialog, showConfirmDialog } from "/views/components/dialogs/di
 
 
 export async function
-loadHome()
+loadHome(msg)
 {
   const app = document.getElementById("app");
   const [home_response,
@@ -21,6 +21,10 @@ loadHome()
   app.innerHTML = home_html + forms_html + dialog_html;
   onOpenFile();
   onCreateFile();
+
+  if (msg != null) {
+    showNotifDialog("Error", msg);
+  }
 }
 
 
@@ -33,11 +37,11 @@ onOpenFile() {
 				async (data) => {
 				  try {
 				    await openDb(data.file_path, data.passkey);
-				    loadManager();
 				  } catch (err) {
 				    const message = err instanceof Error ? err.message : String(err);
-				    showNotifDialog("Error", "Opening the given database file failed: " + message);
+				    showNotifDialog("Error", "Failed opening the given database file: " + message);
 				  }
+				  await loadManager();
 				});
 			    });
 }

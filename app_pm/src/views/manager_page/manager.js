@@ -114,8 +114,9 @@ refreshRows()
     const all_rows = await showAllRows();
     await deployRows(all_rows);
   } catch (err) {
+    await closeDb();
     const message = err instanceof Error ? err.message : String(err);
-    showNotifDialog("Error", "There was an error while deploying the passwords: " + message);
+    loadHome("The given passkey was incorrect. Try again.");
   }
 }
 
@@ -144,7 +145,8 @@ deployRows(rows_data)
 	container.appendChild(row_widget);
       });
   } catch (err) {
+    await closeDb();
     const message = err instanceof Error ? err.message : String(err);
-    showNotifDialog("Error", "There was an error while deploying the passwords: " + message);
+    loadHome("There was an error while deploying the passwords.");
   }
 }

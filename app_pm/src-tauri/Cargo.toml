@@ -30,3 +30,4 @@ dirs = "5.0"
 #Openssl
 openssl = { version = "0.10", features = ["vendored"] }
 tauri-plugin-clipboard-manager = "2"
+tauri-plugin-os = "2"

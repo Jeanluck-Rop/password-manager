@@ -13,5 +13,5 @@ invoke('init_manager',
        'copy_to_clipboard');
 
 window.addEventListener("DOMContentLoaded",
-			() => { loadHome(); }
+			() => { loadHome(null); }
 		       );

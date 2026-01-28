@@ -1,14 +1,18 @@
 import { open } from '/views/utils/plugin-dialog.js';
 import { showOverlay, hideOverlay } from '/views/utils/utils.js';
+import { type } from '/views/utils/plugin-os.js';
 
 
-export async function
+async function
 openFileExplorer()
 {
+  const os_type = await type();
+  const is_android = os_type === 'android';
+  
   const selected =
 	await open({
 	  multiple: false,
-	  filters: [{
+	  filters: is_android ? [] : [{
 	    name: 'Base de Datos',
 	    extensions: ['db', 'sqlite', 'sqlite3']
 	  }]
@@ -58,7 +62,7 @@ showOpenFileForm(onAccept)
 	() => {
 	  const has_path = current_db_path.length > 0;
 	  const has_passkey = passkey_input.value.trim() !== "";
-	  accept_btn.disabled = !(has_passkey && has_path);
+	  accept_btn.disabled = !(has_path && has_passkey);
 	};
   const on_select_file_click =
 	async () => {
@@ -99,12 +103,14 @@ showCreateForm(onAccept)
   const confirm_input = form.querySelector('.confirm-passkey');
   const toggle_confirm_btn = form.querySelector('.toggle-passkey-confirm');
   const confirm_error = form.querySelector('.passkey-confirm-error');
+  const file_name_error = form.querySelector('.file-name-error');
   const cancel_btn = form.querySelector('.cancel-create-btn');
   const accept_btn = form.querySelector('.accept-create-btn');
   file_name_input.value = "";
   passkey_input.value = "";
   confirm_input.value = "";
   confirm_error.classList.add('hidden');
+  file_name_error.classList.add('hidden');
   accept_btn.disabled = true;
   const cleanup =
 	() => {
@@ -131,10 +137,15 @@ showCreateForm(onAccept)
 	};
   const on_inputs_changed =
 	() => {
-	  const has_file_name = file_name_input.value.trim().endsWith(".db");;
+	  const has_file_name = file_name_input.value.trim().endsWith(".db");
 	  const has_passkey = passkey_input.value.trim() !== "";
 	  const has_confirm = confirm_input.value.trim() !== "";
 	  const matches = passkey_input.value === confirm_input.value;
+	  if (!has_file_name) {
+	    file_name_error.classList.remove('hidden');
+	  } else {
+	    file_name_error.classList.add('hidden');
+	  }
 	  if (!matches && confirm_input.value.trim() !== "") {
 	    confirm_error.classList.remove('hidden');
 	  } else {

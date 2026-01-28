@@ -7,9 +7,10 @@ use core_pm::password_manager::PasswordManager;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
-	.plugin(tauri_plugin_clipboard_manager::init())
+        .plugin(tauri_plugin_clipboard_manager::init())
         .manage(PMState {
             manager: Mutex::new(PasswordManager::new().unwrap()),
         })
@@ -25,6 +26,6 @@ pub fn run() {
             commands::show_all_rows,
             commands::search_rows
         ])
-        .run(tauri::generate_context!())
+	.run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
